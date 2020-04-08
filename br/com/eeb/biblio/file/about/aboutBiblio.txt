@@ -1,0 +1,24 @@
+==============================================================          
+
+ *
+ *   Ferramentas: empréstimo e devolução
+ *
+
+ *
+ *   Para realizar as operações de empréstimo e devolução de
+ *   livros, acesse o painel "Biblioteca".
+ *   Selecione a linha da tabela correspondente ao livro 
+ *   desejado e clique ou em "Empréstimo" ou em "Devolução".
+ *   Para tais operações, o usuário deverá informar os dados
+ *   do aluno (nome e série).
+ * 
+ *   Verificações:
+ *   1) Não será realizada nenhuma operação caso o usuário
+ *   não selecione uma linha da tabela.
+ *   2) Empréstimo: não será possível realizar empréstimo de 
+ *   livros que não possuam unidades em estoque.
+ *   3) Devolução: não será possível realizar devolução de
+ *   livros que não possuam unidades emprestadas.
+ * 
+
+==============================================================          

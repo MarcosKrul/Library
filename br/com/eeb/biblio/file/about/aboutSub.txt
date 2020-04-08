@@ -1,0 +1,28 @@
+==============================================================           
+
+ *
+ *  Alteração dos valores.
+ *
+
+ * 
+ *   Para alterar os atributos de livros já cadastrados, 
+ *   acesse o painel "Lista de livros".
+ *   Nele, você irá encontrar uma tabela com todos os livros
+ *   cadastrados na biblioteca.
+ *   Para alterar algum atributo, selecione a linha da tabela 
+ *   correspondete ao livro desejado e clique em "Alterar".
+ *   As informações originais do livros serão exibidas nos
+ *   campos abaixo da tabela. 
+ *   O usuário pode alterar esses valores e clicar em "Enviar"
+ *   para salvar as alterações.
+ *
+ *   Verificações:
+ *   1) Não é possível informar um número negativo para a 
+ *   quantidade de páginas.
+ *   2) Não é possível informar um número negativo para a
+ *   quantidade de livros em estoque.
+ *   3) Não é possível diminuir a quantidade de estoque a mais
+ *   do que a quantidade de livros emprestados.
+ *
+
+==============================================================           

@@ -1,0 +1,29 @@
+==============================================================           
+
+ *
+ *   Cadastro de livros no sistema.
+ *
+ 
+ *
+ *   Para cadastro, são necessários:
+ *   Nome do livro, editora do livro, número de páginas
+ *   e quantidade em estoque.
+ *
+ *   Verificações:
+ *   1) Não é possível cadastrar um livro sem que todos os
+ *   atributos estejam preenchidos.
+ *   2) Não é possível informar um número negativo para a 
+ *   quantidade de páginas.
+ *   3) Não é possível informar um número negativo para a
+ *   quantidade de livros em estoque.
+ *   4) É possível cadastrar um livro com zero unidades em 
+ *   estoque.
+ *   5) Não é possível cadastrar um livro que possua todos os
+ *   atributos em comum com outro livro previamente 
+ *   cadastrado.
+ * 
+ *   Para cadastrar um livro, após preencher seus campos, 
+ *   clique em "Enviar".
+ *
+
+==============================================================          

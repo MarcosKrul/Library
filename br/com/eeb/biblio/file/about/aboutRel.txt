@@ -1,0 +1,24 @@
+==============================================================          
+
+ *
+ *   Relarórios de empréstimos.
+ *
+
+ *
+ *   Um relátorio de empréstimo mostra ao usuário todos os
+ *   dados dos alunos, nome e série, respectivamente, que 
+ *   emprestaram uma unidade do livro.
+ * 
+ *   Para gerar um relátorio, clique no item "Relatório"
+ *   do menu superior. A ação pode ser substituída 
+ *   utilizando o seguinte atalho vinculado: 
+ *   CTRL+SHIFT+R.
+ * 
+ *   O usuário poderá gerar um relatório:
+ *   1) informando o nome exato do livro desejado; ou
+ *   2) clicando no item "Relatório" após ter selecionado o
+ *   livro desejado ou na tabela do painel "Lista de livros"
+ *   ou na tabela do painel "Biblioteca".
+ *
+
+============================================================          

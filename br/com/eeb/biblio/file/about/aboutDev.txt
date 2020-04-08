@@ -1,0 +1,18 @@
+==============================================================          
+
+ * 
+ *   Bem-vindo(a) ao sistema de controle de biblioteca.
+ * 
+
+ * 
+ *   Essa aplicação foi desenvolvida por Marcos Renan Krul, 
+ *   acadêmcico de Engenharia de Computação (terceiro período) 
+ *   da Universidade Estadual de Ponta Grossa (UEPG).
+ *   O sistema foi desenvolvido no primeiro trimestre de 2020.
+ *
+ *   Contato com o programador: 
+ *   E-mail: marcoskrul2k@gmail.com
+ *   Whatsapp: +55 (47) 99202-1466
+ *
+
+==============================================================          

@@ -1,0 +1,19 @@
+==============================================================           
+
+ * 
+ *   Exclusão de livros.
+ *
+
+ *
+ *   Para excluir um livro, acesse o painel "Lista de livros"
+ *   e selecione a linha da tabela correspondete ao livro 
+ *   desejado.
+ *   Posteriormente, clique em "Excluir" e confirme, ou não,
+ *   a exclução.
+ *
+ *   Verificação:
+ *   1) Só poderá ser excluído o livro que possuir todas as suas
+ *   unidades em estoque.
+ *
+
+==============================================================           
