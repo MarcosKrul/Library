@@ -34,7 +34,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
      */
     
     private final TabelaMain modelo;
-    private final String fDir;
+    private final String F_DIR;
     private static boolean corBotao = true;        //true - black; false - white
     
     public TelaPrincipal() {
@@ -43,9 +43,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
         modelo = new TabelaMain();
         tabela_lista.setModel(modelo);
         tabela_biblio.setModel(modelo);
-        fDir = "C:\\Library\\main\\file\\regLab_EEBAB.txt";
+        F_DIR = "C:\\Library\\main\\file\\regLab_EEBAB.txt";
         try{
-            for(Livro aux: FileControll.fread(fDir))
+            for(Livro aux: FileControll.fread(F_DIR))
                 modelo.addRow(aux);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro no arquivo");
@@ -99,7 +99,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             if(resposta == JOptionPane.YES_OPTION){
                 modelo.removeRow(index);
                 try{
-                    FileControll.attDelte(fDir, index);
+                    FileControll.attDelte(F_DIR, index);
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Erro no arquivo ao tentar excluir. Por favor, contate o programador");
                 }
@@ -114,7 +114,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     
     public void confirmAtt (int rowIndex) {
         try{
-            FileControll.attChange(modelo.livroControle(rowIndex), fDir, rowIndex);
+            FileControll.attChange(modelo.livroControle(rowIndex), F_DIR, rowIndex);
         } catch (IOException e){
             JOptionPane.showMessageDialog(null, "Erro no arquivo. Contato o programador");
             e.printStackTrace();
@@ -1001,7 +1001,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                         return;
                     }
                 modelo.addRow(l);
-                FileControll.fwrite(l.toString(), fDir, true);
+                FileControll.fwrite(l.toString(), F_DIR, true);
                 JOptionPane.showMessageDialog(null, "Livro cadastrado com sucesso!");
                 clearInput();
             } else JOptionPane.showMessageDialog(null, "Valores negativos são inválidos. Por favor, informe um valor positivo",
@@ -1077,7 +1077,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 "Confirmação de reinicialização", JOptionPane.YES_NO_OPTION);
         if(resposta == JOptionPane.YES_OPTION){
             try {
-                FileControll.restart("C:\\Library\\restart_"+data(), fDir);
+                FileControll.restart("C:\\Library\\restart_"+data(), F_DIR);
                 JOptionPane.showMessageDialog(null, "O programa precisa ser fechado para concluir a reinicialização.");
                 System.exit(0);
             } catch (IOException e) {
@@ -1089,7 +1089,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void itemMenu_backupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemMenu_backupActionPerformed
         try {
-            FileControll.backup("C:\\Library\\backup_"+data(), fDir);
+            FileControll.backup("C:\\Library\\backup_"+data(), F_DIR);
             JOptionPane.showMessageDialog(null, "Backup conluído com sucesso");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro ao executar o backup. Por favor, contate o programador");

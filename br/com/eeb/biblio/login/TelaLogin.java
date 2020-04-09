@@ -24,8 +24,8 @@ public class TelaLogin extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         btn_enviar.setBackground(new Color(79, 79, 79));
         btn_enviar.setForeground(Color.WHITE);
-        in_user.setText("admin");
-        in_password.setText("admin");
+//        in_user.setText("admin");
+//        in_password.setText("admin");
     }
 
     /**
