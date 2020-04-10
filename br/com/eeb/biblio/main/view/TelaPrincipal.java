@@ -764,7 +764,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         
         ArrayList<Aluno> a = l.getAlunoEmprestou();
         String alunos = "<html><body>Relátorio de empréstimos do livro <i>'"+l.getNome()+
-                        "' </i><br/><br/></body></html>";
+                        "' </i></body></html>\n\n";
         for(Aluno aux : a){
             alunos += "Nome: "+aux.getNome()+" - Série: "+aux.getSerie()+"º ano\n";
         }
