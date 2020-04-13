@@ -1,4 +1,3 @@
-
 package br.com.eeb.biblio.main.view;
 import br.com.eeb.biblio.file.FileControll;
 import br.com.eeb.biblio.file.FileHelp;
@@ -85,33 +84,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         chg_quantidade.setText("");
     }
     
-    public void confirmDelete(int index){
-        if(index != -1){
-            Livro l = modelo.livroControle(index);
-            if(l.getQuantidadeDisponivel() != l.getQuantidadeEstoque()){
-                JOptionPane.showMessageDialog(null, "Não é possível excluir um livro que possui unidades emprestadas");
-                tabela_biblio.clearSelection();
-                return;
-            }
-            int resposta = JOptionPane.showConfirmDialog(this, 
-                    "Você tem certeza que deseja excluir este livro?", 
-                    "Confirmação de exclusão", JOptionPane.YES_NO_OPTION);
-            if(resposta == JOptionPane.YES_OPTION){
-                modelo.removeRow(index);
-                try{
-                    FileControll.attDelte(F_DIR, index);
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(null, "Erro no arquivo ao tentar excluir. Por favor, contate o programador");
-                }
-                JOptionPane.showMessageDialog(null, "Livro excluído com sucesso!");
-                tabela_biblio.clearSelection();
-            } 
-        } else {
-            JOptionPane.showMessageDialog(null, "Por favor, selecione um livro para realizar esta operação");
-            tabela_biblio.clearSelection();
-        }
-    }
-    
     public void confirmAtt (int rowIndex) {
         try{
             FileControll.attChange(modelo.livroControle(rowIndex), F_DIR, rowIndex);
@@ -121,25 +93,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
     }
     
-    public String data () {
-        SimpleDateFormat sf = new SimpleDateFormat("dd.MM.yy HH.mm.ss");
-        return sf.format(Calendar.getInstance().getTime());
-    }
-    
-    private void suporteAbout(String name) {
-        try {
-            String out = "";
-            for(String aux: FileHelp.read(name))
-                out += aux+"\n";
-            JOptionPane.showMessageDialog(null, out);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Erro no arquivo "+name+" da aplicação. Por favor, contate o programador");
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "Erro. Por favor, contate o programador");
-            e.printStackTrace();
-        }
-    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -192,6 +145,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         itemMenu_backup = new javax.swing.JMenuItem();
         itemMenu_zerar = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        itemMenu_recuperar = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         itemMenu_temaClaro = new javax.swing.JMenuItem();
         itemMenu_temaEscuro = new javax.swing.JMenuItem();
@@ -203,6 +158,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         itemMenu_help_excluir = new javax.swing.JMenuItem();
         itemMenu_help_biblio = new javax.swing.JMenuItem();
         itemMenu_help_relatorio = new javax.swing.JMenuItem();
+        itemMenu_help_recuperacao = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         itemMenu_sobre = new javax.swing.JMenuItem();
 
@@ -633,6 +589,15 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
         jMenu1.add(itemMenu_zerar);
+        jMenu1.add(jSeparator2);
+
+        itemMenu_recuperar.setText("Recuperar backup");
+        itemMenu_recuperar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemMenu_recuperarActionPerformed(evt);
+            }
+        });
+        jMenu1.add(itemMenu_recuperar);
 
         jMenuBar1.add(jMenu1);
 
@@ -673,7 +638,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jMenu5.setText("Ajuda");
 
-        itemMenu_help_cadastro.setText("Cadastro de livros");
+        itemMenu_help_cadastro.setText("Cadastro");
         itemMenu_help_cadastro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 itemMenu_help_cadastroActionPerformed(evt);
@@ -713,6 +678,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
         jMenu5.add(itemMenu_help_relatorio);
 
+        itemMenu_help_recuperacao.setText("Recuperação");
+        itemMenu_help_recuperacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemMenu_help_recuperacaoActionPerformed(evt);
+            }
+        });
+        jMenu5.add(itemMenu_help_recuperacao);
+
         jMenuBar1.add(jMenu5);
 
         jMenu2.setText("Sobre");
@@ -748,12 +721,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
-    private void jMenu2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu2ActionPerformed
-    }//GEN-LAST:event_jMenu2ActionPerformed
-
-    private void itemMenu_sobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemMenu_sobreActionPerformed
-        suporteAbout("aboutDev.txt");
-    }//GEN-LAST:event_itemMenu_sobreActionPerformed
+    private void jMenu2ActionPerformed(java.awt.event.ActionEvent evt) {                                       
+    }                                      
     
     public void suporteRelatorio(int index){
         Livro l = modelo.livroControle(index);
@@ -872,6 +841,33 @@ public class TelaPrincipal extends javax.swing.JFrame {
         tabela_lista.clearSelection();
     }//GEN-LAST:event_btn_chg_cancelarActionPerformed
 
+    public void confirmDelete(int index){
+        if(index != -1){
+            Livro l = modelo.livroControle(index);
+            if(l.getQuantidadeDisponivel() != l.getQuantidadeEstoque()){
+                JOptionPane.showMessageDialog(null, "Não é possível excluir um livro que possui unidades emprestadas");
+                tabela_biblio.clearSelection();
+                return;
+            }
+            int resposta = JOptionPane.showConfirmDialog(this, 
+                    "Você tem certeza que deseja excluir este livro?", 
+                    "Confirmação de exclusão", JOptionPane.YES_NO_OPTION);
+            if(resposta == JOptionPane.YES_OPTION){
+                modelo.removeRow(index);
+                try{
+                    FileControll.attDelte(F_DIR, index);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "Erro no arquivo ao tentar excluir. Por favor, contate o programador");
+                }
+                JOptionPane.showMessageDialog(null, "Livro excluído com sucesso!");
+                tabela_biblio.clearSelection();
+            } 
+        } else {
+            JOptionPane.showMessageDialog(null, "Por favor, selecione um livro para realizar esta operação");
+            tabela_biblio.clearSelection();
+        }
+    }
+    
     private void btn_chg_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chg_excluirActionPerformed
         confirmDelete(tabela_lista.getSelectedRow());
     }//GEN-LAST:event_btn_chg_excluirActionPerformed
@@ -967,21 +963,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         clearInput();
     }//GEN-LAST:event_btn_cancelarActionPerformed
 
-    private void btn_cancelarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cancelarMouseExited
-        if(corBotao){
-            btn_cancelar.setBackground(new Color(240, 240, 240));
-            btn_cancelar.setForeground(Color.BLACK);
-        } else {
-            btn_cancelar.setBackground(new Color(176,196,222));
-            btn_cancelar.setForeground(Color.BLACK);
-        }
-    }//GEN-LAST:event_btn_cancelarMouseExited
-
-    private void btn_cancelarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cancelarMouseEntered
-        btn_cancelar.setBackground(Color.RED);
-        btn_cancelar.setForeground(Color.WHITE);
-    }//GEN-LAST:event_btn_cancelarMouseEntered
-
     private void btn_enviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_enviarActionPerformed
         try{
             String nome, editora;
@@ -1028,6 +1009,21 @@ public class TelaPrincipal extends javax.swing.JFrame {
             btn_enviar.setBackground(Color.GREEN);
             btn_enviar.setForeground(Color.WHITE);
     }//GEN-LAST:event_btn_enviarMouseEntered
+    
+    private void btn_cancelarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cancelarMouseExited
+        if(corBotao){
+            btn_cancelar.setBackground(new Color(240, 240, 240));
+            btn_cancelar.setForeground(Color.BLACK);
+        } else {
+            btn_cancelar.setBackground(new Color(176,196,222));
+            btn_cancelar.setForeground(Color.BLACK);
+        }
+    }//GEN-LAST:event_btn_cancelarMouseExited
+
+    private void btn_cancelarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_cancelarMouseEntered
+        btn_cancelar.setBackground(Color.RED);
+        btn_cancelar.setForeground(Color.WHITE);
+    }//GEN-LAST:event_btn_cancelarMouseEntered
 
     private JLabel[] labes(){
         JLabel [] labes = new JLabel[]{jLabel1, jLabel2, jLabel3,
@@ -1087,6 +1083,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_itemMenu_zerarActionPerformed
 
+    public String data () {
+        SimpleDateFormat sf = new SimpleDateFormat("dd.MM.yy HH.mm.ss");
+        return sf.format(Calendar.getInstance().getTime());
+    }
+    
     private void itemMenu_backupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemMenu_backupActionPerformed
         try {
             FileControll.backup("C:\\Library\\backup_"+data(), F_DIR);
@@ -1096,6 +1097,26 @@ public class TelaPrincipal extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_itemMenu_backupActionPerformed
+    
+    private void itemMenu_recuperarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemMenu_recuperarActionPerformed
+    	int resposta = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja recuperar um backup?", 
+    			"Confirmação de recuperação", JOptionPane.YES_NO_OPTION);
+    	if(resposta == JOptionPane.YES_OPTION){
+    		String escolhaBackup = (String) JOptionPane.showInputDialog(null, "Selecione o backup desejado", 
+    				"Recuperação", JOptionPane.QUESTION_MESSAGE, null, FileControll.files(), FileControll.files()[0]);
+    		
+    		if(escolhaBackup == null) return;
+    		
+    		try {
+    			FileControll.recuperarBackup("C:\\Library\\"+escolhaBackup, F_DIR);
+    			JOptionPane.showMessageDialog(null, "O programa precisa ser reiniciado para concluir a recuperação.");
+    			System.exit(0);
+    		} catch (IOException e) {
+    			JOptionPane.showMessageDialog(null, "Erro no arquivo. Por favor, contate o programador.");
+    			e.printStackTrace();
+    		}
+    	}
+    }//GEN-LAST:event_itemMenu_recuperarActionPerformed
     
     private void intemMenu_qntLivrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intemMenu_qntLivrosActionPerformed
         JOptionPane.showMessageDialog(null, "Quantidade atual de livros diferentes na biblioteca: "+modelo.getRowCount());
@@ -1109,6 +1130,25 @@ public class TelaPrincipal extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "Quantidade atual de livros emprestados da biblioteca: "+modelo.qntDisponivel());
     }//GEN-LAST:event_itemMenu_qntEmprestadosActionPerformed
 
+    private void suporteAbout(String name) {
+        try {
+            String out = "";
+            for(String aux: FileHelp.read(name))
+                out += aux+"\n";
+            JOptionPane.showMessageDialog(null, out);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Erro no arquivo "+name+" da aplicação. Por favor, contate o programador");
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(null, "Erro. Por favor, contate o programador");
+            e.printStackTrace();
+        }
+    }
+    
+    private void itemMenu_sobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemMenu_sobreActionPerformed
+    	suporteAbout("aboutDev.txt");
+    }//GEN-LAST:event_itemMenu_sobreActionPerformed
+    
     private void itemMenu_help_cadastroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemMenu_help_cadastroActionPerformed
         suporteAbout("aboutCad.txt");
     }//GEN-LAST:event_itemMenu_help_cadastroActionPerformed
@@ -1129,7 +1169,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
         suporteAbout("aboutRel.txt");
     }//GEN-LAST:event_itemMenu_help_relatorioActionPerformed
 
-    
+    private void itemMenu_help_recuperacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemMenu_help_recuperacaoActionPerformed
+    	suporteAbout("aboutRec.txt");
+    }//GEN-LAST:event_itemMenu_help_recuperacaoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1189,9 +1232,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem itemMenu_help_biblio;
     private javax.swing.JMenuItem itemMenu_help_cadastro;
     private javax.swing.JMenuItem itemMenu_help_excluir;
+    private javax.swing.JMenuItem itemMenu_help_recuperacao;
     private javax.swing.JMenuItem itemMenu_help_relatorio;
     private javax.swing.JMenuItem itemMenu_qntEmprestados;
     private javax.swing.JMenuItem itemMenu_qntUnidades;
+    private javax.swing.JMenuItem itemMenu_recuperar;
     private javax.swing.JMenuItem itemMenu_relatorio;
     private javax.swing.JMenuItem itemMenu_sobre;
     private javax.swing.JMenuItem itemMenu_temaClaro;
@@ -1214,6 +1259,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel painel_biblioteca;
     private javax.swing.JPanel painel_cadastroLivros;

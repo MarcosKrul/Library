@@ -108,4 +108,25 @@ public abstract class FileControll {
         old.delete();
         old.createNewFile();
     }
+    
+    public static String[] files () {
+        File pattern = new File("C:\\Library");
+        String[] list = pattern.list();
+        ArrayList<String> rtn = new ArrayList<>();
+        for(int i=0 ; i<list.length ; i++)
+            if(list[i].contains("backup_"))
+                rtn.add(list[i]);
+        return rtn.toArray(new String[rtn.size()]);
+    }
+    
+    public static void recuperarBackup (String nome, String principal) throws IOException{
+        File dir = new File(nome);
+        if(!dir.exists())
+            return;
+        
+        Path source = Paths.get(nome+NAME);
+        Path target = Paths.get(principal);
+        Files.delete(target);
+        Files.copy(source, target);
+    }
 }

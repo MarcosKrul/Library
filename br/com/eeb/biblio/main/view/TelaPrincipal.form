@@ -51,6 +51,16 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="itemMenu_zerarActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="itemMenu_recuperar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Recuperar backup"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="itemMenu_recuperarActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu3">
@@ -107,7 +117,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="itemMenu_help_cadastro">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cadastro de livros"/>
+                <Property name="text" type="java.lang.String" value="Cadastro"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="itemMenu_help_cadastroActionPerformed"/>
@@ -143,6 +153,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="itemMenu_help_relatorioActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="itemMenu_help_recuperacao">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Recupera&#xe7;&#xe3;o"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="itemMenu_help_recuperacaoActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

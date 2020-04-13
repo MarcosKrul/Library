@@ -1,0 +1,24 @@
+==============================================================          
+
+ *
+ *   Recuperação de backup.
+ *
+
+ *
+ *   Este processo irá recuperar um arquivo backup gerado 
+ *   previamente pelo usuário através do item de menu 
+ *   "Gerar backup".
+ *   Caso o usuário realize o processo de recuperação, novas
+ *   alterações não salvas em um novo backup serão perdidas.
+ *   Para realizar o processo, selecione o item 
+ *   "Recuperar backup" no menu "Arquivo". 
+ *   O usuário deverá confirmar tal operação e, posteriormente,
+ *   selecionar qual backup deseja recuperar.
+ *
+ *   O nome dos backups segue o padrão:
+ *      "backup_dia.mes.ano hora.minutos.segundos", 
+ *   onde a data do nome do backup é a data na qual o usuário
+ *   gerou o backup.
+ *
+
+==============================================================          
