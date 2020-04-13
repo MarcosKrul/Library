@@ -126,7 +126,6 @@ public abstract class FileControll {
         
         Path source = Paths.get(nome+NAME);
         Path target = Paths.get(principal);
-        Files.delete(target);
-        Files.copy(source, target);
+        Files.copy(source, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
     }
 }
