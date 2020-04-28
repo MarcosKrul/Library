@@ -2,8 +2,10 @@ package br.com.eeb.biblio.main.view;
 import br.com.eeb.biblio.file.FileControll;
 import br.com.eeb.biblio.file.FileHelp;
 import br.com.eeb.biblio.login.JTextFieldHint;
+import br.com.eeb.biblio.main.CDD.CddControll;
 import br.com.eeb.biblio.main.classes.Aluno;
 import br.com.eeb.biblio.main.classes.Livro;
+import br.com.eeb.biblio.main.exist.Exist;
 import br.com.eeb.biblio.main.table.TabelaMain;
 import java.awt.Color;
 import java.awt.Font;
@@ -39,17 +41,23 @@ public class TelaPrincipal extends javax.swing.JFrame {
     public TelaPrincipal() {
         initComponents();
         setLocationRelativeTo(null);
+        F_DIR = "C:\\Library\\main\\file\\regLab_EEBAB.txt";
         modelo = new TabelaMain();
         tabela_lista.setModel(modelo);
         tabela_biblio.setModel(modelo);
-        F_DIR = "C:\\Library\\main\\file\\regLab_EEBAB.txt";
-        try{
+        try {
             for(Livro aux: FileControll.fread(F_DIR))
                 modelo.addRow(aux);
+            for(String aux : CddControll.getCdds(FileControll.fread(F_DIR))){
+                lista_box_cdd.addItem(aux);
+                biblio_box_cdd.addItem(aux);
+            }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro no arquivo");
             e.printStackTrace();
         }
+        CddControll.comboListener(lista_box_cdd, biblio_box_cdd, modelo);
+        CddControll.comboListener(biblio_box_cdd, lista_box_cdd, modelo);
         btn_chg_enviar.setEnabled(false);
         btn_chg_cancelar.setEnabled(false);
         btn_cancelar.setBackground(new Color(240, 240, 240));
@@ -75,6 +83,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         in_editora.setText("");
         in_paginas.setText("");
         in_qntEstoque.setText("");
+        in_cdd.setText("");
     }
     
     public void clearInputChg(){
@@ -82,11 +91,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
         chg_editora.setText("");
         chg_paginas.setText("");
         chg_quantidade.setText("");
+        chg_cdd.setText("");
     }
     
-    public void confirmAtt (int rowIndex) {
-        try{
-            FileControll.attChange(modelo.livroControle(rowIndex), F_DIR, rowIndex);
+    public void confirmAtt (int rowIndex, Livro l) {
+        try {
+            FileControll.attChange(l, F_DIR, rowIndex);
+            CddControll.tableCdd(modelo, (String) biblio_box_cdd.getSelectedItem());
         } catch (IOException e){
             JOptionPane.showMessageDialog(null, "Erro no arquivo. Contato o programador");
             e.printStackTrace();
@@ -116,6 +127,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
         in_paginas = new JTextFieldHint(new JTextField(), "", "Páginas");
         btn_enviar = new javax.swing.JButton();
         btn_cancelar = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        in_cdd = new JTextFieldHint(new JTextField(), "", "CDD do livro; se não informado: Nenhum");
         cp_data = new javax.swing.JLabel();
         painel_tabela = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -132,11 +145,17 @@ public class TelaPrincipal extends javax.swing.JFrame {
         btn_chg_enviar = new javax.swing.JButton();
         btn_chg_excluir = new javax.swing.JButton();
         btn_chg_cancelar = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        lista_box_cdd = new javax.swing.JComboBox<>();
+        jLabel12 = new javax.swing.JLabel();
+        chg_cdd = new javax.swing.JTextField();
         painel_biblioteca = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabela_biblio = new javax.swing.JTable();
         btn_emprestimo = new javax.swing.JButton();
         btn_devolucao = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        biblio_box_cdd = new javax.swing.JComboBox<>();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         intemMenu_qntLivros = new javax.swing.JMenuItem();
@@ -237,12 +256,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("CDD");
+
+        in_cdd.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        in_cdd.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        in_cdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                in_cddActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout painel_dadosCadastraisLayout = new javax.swing.GroupLayout(painel_dadosCadastrais);
         painel_dadosCadastrais.setLayout(painel_dadosCadastraisLayout);
         painel_dadosCadastraisLayout.setHorizontalGroup(
             painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painel_dadosCadastraisLayout.createSequentialGroup()
-                .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painel_dadosCadastraisLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -256,17 +287,19 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                     .addComponent(in_qntEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(painel_dadosCadastraisLayout.createSequentialGroup()
-                                .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel10)
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel1))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(in_nomLivro)
-                                    .addComponent(in_editora)))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, painel_dadosCadastraisLayout.createSequentialGroup()
-                        .addGap(81, 81, 81)
+                                    .addComponent(in_editora)
+                                    .addComponent(in_cdd)))))
+                    .addGroup(painel_dadosCadastraisLayout.createSequentialGroup()
+                        .addGap(80, 80, 80)
                         .addComponent(btn_enviar, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 179, Short.MAX_VALUE)
                         .addComponent(btn_cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(84, 84, 84))
         );
@@ -284,18 +317,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(in_editora, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel10)
+                    .addGroup(painel_dadosCadastraisLayout.createSequentialGroup()
+                        .addComponent(in_cdd, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)))
+                .addGap(18, 18, 18)
+                .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(in_paginas, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addGap(11, 11, 11)
                 .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
-                    .addComponent(in_qntEstoque))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(in_qntEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                 .addGroup(painel_dadosCadastraisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_enviar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26))
+                .addContainerGap())
         );
 
         cp_data.setFont(new java.awt.Font("Verdana", 1, 18)); // NOI18N
@@ -320,7 +359,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             .addGroup(painel_cadastroLivrosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(painel_dadosCadastrais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addComponent(cp_data)
                 .addGap(41, 41, 41))
         );
@@ -403,6 +442,23 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        jLabel9.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("CDD");
+
+        lista_box_cdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        jLabel12.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel12.setText("CDD");
+
+        chg_cdd.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        chg_cdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chg_cddActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout painel_tabelaLayout = new javax.swing.GroupLayout(painel_tabela);
         painel_tabela.setLayout(painel_tabelaLayout);
         painel_tabelaLayout.setHorizontalGroup(
@@ -414,19 +470,23 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addGroup(painel_tabelaLayout.createSequentialGroup()
                         .addGroup(painel_tabelaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
-                            .addComponent(jLabel5))
+                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(painel_tabelaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(chg_nome, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
-                            .addComponent(chg_editora))
+                            .addComponent(chg_editora)
+                            .addComponent(lista_box_cdd, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(56, 56, 56)
                         .addGroup(painel_tabelaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel8)
-                            .addComponent(jLabel7))
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel12))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(painel_tabelaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(chg_paginas)
-                            .addComponent(chg_quantidade))))
+                            .addComponent(chg_quantidade)
+                            .addComponent(chg_cdd))))
                 .addContainerGap())
             .addGroup(painel_tabelaLayout.createSequentialGroup()
                 .addGap(32, 32, 32)
@@ -456,7 +516,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addComponent(chg_editora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(chg_quantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(painel_tabelaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(painel_tabelaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel9)
+                        .addComponent(lista_box_cdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel12))
+                    .addComponent(chg_cdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(painel_tabelaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_chg_alterar)
                     .addComponent(btn_chg_enviar)
@@ -501,31 +568,51 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        jLabel11.setFont(new java.awt.Font("Verdana", 1, 18)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setText("CDD");
+
+        biblio_box_cdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
         javax.swing.GroupLayout painel_bibliotecaLayout = new javax.swing.GroupLayout(painel_biblioteca);
         painel_biblioteca.setLayout(painel_bibliotecaLayout);
         painel_bibliotecaLayout.setHorizontalGroup(
             painel_bibliotecaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(painel_bibliotecaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(painel_bibliotecaLayout.createSequentialGroup()
-                .addGap(104, 104, 104)
-                .addComponent(btn_emprestimo, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btn_devolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(106, 106, 106))
+                .addGroup(painel_bibliotecaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(painel_bibliotecaLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painel_bibliotecaLayout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(biblio_box_cdd, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(painel_bibliotecaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btn_devolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_emprestimo, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(137, 137, 137))))
         );
         painel_bibliotecaLayout.setVerticalGroup(
             painel_bibliotecaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(painel_bibliotecaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addGroup(painel_bibliotecaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_emprestimo)
-                    .addComponent(btn_devolucao))
-                .addGap(24, 24, 24))
+                .addGroup(painel_bibliotecaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(painel_bibliotecaLayout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addGroup(painel_bibliotecaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(biblio_box_cdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, painel_bibliotecaLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                        .addComponent(btn_emprestimo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btn_devolucao)
+                        .addContainerGap())))
         );
 
         jTabbedPane1.addTab("Biblioteca", painel_biblioteca);
@@ -543,8 +630,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
             painel_fundoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(painel_fundoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         jMenu1.setText("Arquivo");
@@ -715,7 +802,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(painel_fundo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(painel_fundo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -781,6 +868,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             a = new Aluno(nome, serie);
         } catch(Exception e) {
             JOptionPane.showMessageDialog(null, "Entrada inválida");
+            e.printStackTrace();
         }
         return a;
     }
@@ -798,12 +886,18 @@ public class TelaPrincipal extends javax.swing.JFrame {
             tabela_biblio.clearSelection();
             return;
         }
+        int newIndex = -1;
+        try {
+            newIndex = CddControll.indexFull(l, modelo, (String) biblio_box_cdd.getSelectedItem());
+        } catch (IOException e){
+            e.printStackTrace();
+        }
         Aluno a = inAluno("Devolução");
         if(a != null){
             if(l.devolucao(a)){
                 modelo.fireTableCellUpdated(rowIndex, 3);
                 JOptionPane.showMessageDialog(null, "Livro devolvido com sucesso");
-                confirmAtt(rowIndex);
+                confirmAtt(newIndex, l);
             } else JOptionPane.showMessageDialog(null, "O aluno informado não emprestou o livro selecionado");
         } 
         tabela_biblio.clearSelection();
@@ -822,12 +916,18 @@ public class TelaPrincipal extends javax.swing.JFrame {
             tabela_biblio.clearSelection();
             return;
         }
+        int newIndex = -1;
+        try {
+            newIndex = CddControll.indexFull(l, modelo, (String) biblio_box_cdd.getSelectedItem());
+        } catch (IOException e){
+            e.printStackTrace();
+        }
         Aluno a = inAluno("Cadastro para empréstimo");
         if(a != null){
             if(l.emprestimo(a)){
                 modelo.fireTableCellUpdated(rowIndex, 3);
+                confirmAtt(newIndex, l);
                 JOptionPane.showMessageDialog(null, "Livro emprestado com sucesso");
-                confirmAtt(rowIndex);
             } else JOptionPane.showMessageDialog(null, "Não há unidades deste livro disponíveis para empréstimo");
         }
         tabela_biblio.clearSelection();
@@ -843,6 +943,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     public void confirmDelete(int index){
         if(index != -1){
+            try{
+                modelo.setDados2(FileControll.fread(F_DIR));
+            } catch (IOException e){
+                e.printStackTrace();
+            }
             Livro l = modelo.livroControle(index);
             if(l.getQuantidadeDisponivel() != l.getQuantidadeEstoque()){
                 JOptionPane.showMessageDialog(null, "Não é possível excluir um livro que possui unidades emprestadas");
@@ -858,8 +963,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     FileControll.attDelte(F_DIR, index);
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Erro no arquivo ao tentar excluir. Por favor, contate o programador");
+                    e.printStackTrace();
                 }
                 JOptionPane.showMessageDialog(null, "Livro excluído com sucesso!");
+                biblio_box_cdd.setSelectedItem("Nenhum");
+                lista_box_cdd.setSelectedItem("Nenhum");
                 tabela_biblio.clearSelection();
             } 
         } else {
@@ -869,7 +977,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }
     
     private void btn_chg_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chg_excluirActionPerformed
-        confirmDelete(tabela_lista.getSelectedRow());
+        try {
+            confirmDelete(CddControll.indexFull(modelo.livroControle(tabela_lista.getSelectedRow()), modelo, 
+                    (String) lista_box_cdd.getSelectedItem()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btn_chg_excluirActionPerformed
 
     private void btn_chg_enviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chg_enviarActionPerformed
@@ -882,13 +995,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
         int resposta = JOptionPane.showConfirmDialog(this,
             "Os dados do livro selecionado serão alterados definitivamente",
             "Atualização de dados", JOptionPane.OK_CANCEL_OPTION);
-
+        
         if(resposta == JOptionPane.OK_OPTION){
             try{
-
+                int newIndex = CddControll.indexFull(modelo.livroControle(rowIndex), modelo, (String) biblio_box_cdd.getSelectedItem());
+                modelo.setDados2(FileControll.fread(F_DIR));
                 int pgs = Integer.parseInt(chg_paginas.getText());
                 if(pgs>=0)
-                    modelo.setValueAt(pgs, rowIndex, 2);
+                    modelo.setValueAt(pgs, newIndex, 2);
                 else {
                     JOptionPane.showMessageDialog(null, "Valores negativos são inválidos");
                     btn_chg_cancelarActionPerformed(evt);
@@ -896,22 +1010,22 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     return;
                 }
 
-                int qntEstoqueAnterior = (int) modelo.getValueAt(rowIndex, 4);
-                int qntDisponivelAnterior = (int) modelo.getValueAt(rowIndex, 3);
+                int qntEstoqueAnterior = (int) modelo.getValueAt(newIndex, 4);
+                int qntDisponivelAnterior = (int) modelo.getValueAt(newIndex, 3);
                 int qntEstoqueNova = Integer.parseInt(chg_quantidade.getText());
                 int qntDisponivelNova;
 
                 if(qntEstoqueNova>=0){
                     if(qntEstoqueNova >= qntEstoqueAnterior){
                         qntDisponivelNova = qntDisponivelAnterior + (qntEstoqueNova - qntEstoqueAnterior);
-                        modelo.setValueAt(qntEstoqueNova, rowIndex, 4);
-                        modelo.setValueAt(qntDisponivelNova, rowIndex, 3);
+                        modelo.setValueAt(qntEstoqueNova, newIndex, 4);
+                        modelo.setValueAt(qntDisponivelNova, newIndex, 3);
                     } else {
                         int qntEmprestado = qntEstoqueAnterior - qntDisponivelAnterior;
                         qntDisponivelNova = qntDisponivelAnterior - (qntEstoqueAnterior - qntEstoqueNova);
                         if(qntEstoqueNova >= qntEmprestado){
-                            modelo.setValueAt(qntEstoqueNova, rowIndex, 4);
-                            modelo.setValueAt(qntDisponivelNova, rowIndex, 3);
+                            modelo.setValueAt(qntEstoqueNova, newIndex, 4);
+                            modelo.setValueAt(qntDisponivelNova, newIndex, 3);
                         } else {
                             JOptionPane.showMessageDialog(null, "Não é possível diminuir o estoque antes de realizar a devolução");
                             btn_chg_cancelarActionPerformed(evt);
@@ -926,10 +1040,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     return;
                 }
                 
-                modelo.setValueAt(chg_nome.getText(), rowIndex, 0);
-                modelo.setValueAt(chg_editora.getText(), rowIndex, 1);
-                
-                confirmAtt(rowIndex);
+                modelo.setValueAt(chg_nome.getText(), newIndex, 0);
+                modelo.setValueAt(chg_editora.getText(), newIndex, 1);
+                String cdd = (chg_cdd.getText().equals("")? "Nenhum" : chg_cdd.getText());
+                if(!CddControll.existCdd(cdd)){
+                    lista_box_cdd.addItem(cdd);
+                    biblio_box_cdd.addItem(cdd);
+                }
+                modelo.setValueAt(cdd, newIndex, 5);
+                        
+                confirmAtt(newIndex, modelo.livroControle(newIndex));
                 
                 JOptionPane.showMessageDialog(null, "Dados alterados com sucesso!");
                 btn_chg_enviar.setEnabled(false);
@@ -939,6 +1059,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 clearInputChg();
             } catch(Exception e) {
                 JOptionPane.showMessageDialog(null, "Entrada inválida");
+                e.printStackTrace();
             }
         } 
         tabela_lista.clearSelection();
@@ -957,6 +1078,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         chg_editora.setText((String) modelo.getValueAt(index, 1));
         chg_paginas.setText(Integer.toString((int) modelo.getValueAt(index, 2)));
         chg_quantidade.setText(Integer.toString((int) modelo.getValueAt(index, 4)));
+        chg_cdd.setText((String) modelo.getValueAt(index, 5));
     }//GEN-LAST:event_btn_chg_alterarActionPerformed
 
     private void btn_cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelarActionPerformed
@@ -965,22 +1087,32 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void btn_enviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_enviarActionPerformed
         try{
-            String nome, editora;
-            int qnt, paginas;
-
-            nome = in_nomLivro.getText().trim();
-            editora = in_editora.getText();
-            qnt = Integer.parseInt(in_qntEstoque.getText());
-            paginas = Integer.parseInt(in_paginas.getText());
+            String nome = in_nomLivro.getText().trim();
+            if(nome.equals("")){
+                JOptionPane.showMessageDialog(null, "Por favor, informe o nome do livro");
+                return;
+            }
+            
+            String editora = in_editora.getText();
+            if(editora.equals("")){
+                JOptionPane.showMessageDialog(null, "Por favor, informe o nome da editora");
+                return;
+            }
+            String cdd = (in_cdd.getText().equals("") ? "Nenhum" : in_cdd.getText());
+            if(!CddControll.existCdd(cdd)){
+                lista_box_cdd.addItem(cdd);
+                biblio_box_cdd.addItem(cdd);
+            }
+            int qnt = Integer.parseInt(in_qntEstoque.getText());
+            int paginas = Integer.parseInt(in_paginas.getText());
 
             if(paginas>0 && qnt>0){
-                Livro l = new Livro(nome, editora, qnt, qnt, paginas);
-                for(Livro aux : modelo.getDados())
-                    if(l.equals(aux)) {
-                        JOptionPane.showMessageDialog(null, "O livro infomado já está cadastrado");
-                        clearInput();
-                        return;
-                    }
+                Livro l = new Livro(nome, editora, cdd, qnt, qnt, paginas);
+                if(!Exist.existBook(l)) {
+                    JOptionPane.showMessageDialog(null, "O livro infomado já está cadastrado");
+                    clearInput();
+                    return;
+                }
                 modelo.addRow(l);
                 FileControll.fwrite(l.toString(), F_DIR, true);
                 JOptionPane.showMessageDialog(null, "Livro cadastrado com sucesso!");
@@ -989,9 +1121,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     "Entrada inválida", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro no arquivo. Contate o programador");
-        }catch(Exception e) {
+            e.printStackTrace();
+        } catch(Exception e) {
             JOptionPane.showMessageDialog(null, "Entrada inválida. Por favor, revise os dados", "Erro na entrada", 
                     JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }//GEN-LAST:event_btn_enviarActionPerformed
 
@@ -1027,7 +1161,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private JLabel[] labes(){
         JLabel [] labes = new JLabel[]{jLabel1, jLabel2, jLabel3,
-        jLabel4, jLabel5, jLabel6, jLabel7, jLabel8};
+        jLabel4, jLabel5, jLabel6, jLabel7, jLabel8, jLabel9, jLabel10, jLabel11, jLabel12};
         return labes;
     }
     
@@ -1173,6 +1307,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
     	suporteAbout("aboutRec.txt");
     }//GEN-LAST:event_itemMenu_help_recuperacaoActionPerformed
 
+    private void in_cddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_in_cddActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_in_cddActionPerformed
+
+    private void chg_cddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chg_cddActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_chg_cddActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -1209,6 +1350,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> biblio_box_cdd;
     private javax.swing.JButton btn_cancelar;
     private javax.swing.JButton btn_chg_alterar;
     private javax.swing.JButton btn_chg_cancelar;
@@ -1217,11 +1359,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btn_devolucao;
     private javax.swing.JButton btn_emprestimo;
     private javax.swing.JButton btn_enviar;
+    private javax.swing.JTextField chg_cdd;
     private javax.swing.JTextField chg_editora;
     private javax.swing.JTextField chg_nome;
     private javax.swing.JTextField chg_paginas;
     private javax.swing.JTextField chg_quantidade;
     private javax.swing.JLabel cp_data;
+    private javax.swing.JTextField in_cdd;
     private javax.swing.JTextField in_editora;
     private javax.swing.JTextField in_nomLivro;
     private javax.swing.JTextField in_paginas;
@@ -1243,6 +1387,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem itemMenu_temaEscuro;
     private javax.swing.JMenuItem itemMenu_zerar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1250,6 +1397,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -1261,6 +1409,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JComboBox<String> lista_box_cdd;
     private javax.swing.JPanel painel_biblioteca;
     private javax.swing.JPanel painel_cadastroLivros;
     private javax.swing.JPanel painel_dadosCadastrais;

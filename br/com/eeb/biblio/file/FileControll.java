@@ -6,6 +6,7 @@
 package br.com.eeb.biblio.file;
 import br.com.eeb.biblio.main.classes.Livro;
 import br.com.eeb.biblio.main.classes.Aluno;
+import br.com.eeb.biblio.main.comparator.BookComparator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  *
@@ -52,8 +54,9 @@ public abstract class FileControll {
                 int qEst = Integer.parseInt(atributos[2]);
                 int qDis = Integer.parseInt(atributos[3]);
                 int pg = Integer.parseInt(atributos[4]);
-                l = new Livro(nome, editora, qEst, qDis, pg);
-                for(int i=5 ; i<atributos.length ; i+=2)
+                String cdd = atributos[5];
+                l = new Livro(nome, editora, cdd, qEst, qDis, pg);
+                for(int i=6 ; i<atributos.length ; i+=2)
                     if(!atributos[i].equals("null")){
                         Aluno a;
                         String nomeA = atributos[i];
@@ -64,6 +67,7 @@ public abstract class FileControll {
                 list.add(l);
             }
         }
+        Collections.sort(list, new BookComparator());
         return list;
     }
     

@@ -12,9 +12,9 @@ import java.util.ArrayList;
  *
  * @author marco
  */
-public class Exist {
+public abstract class Exist {
     
-    public boolean existBook (Livro l) throws IllegalArgumentException {
+    public static boolean existBook (Livro l) throws IllegalArgumentException {
         if(l == null ||  !(l instanceof Livro))
             throw new IllegalArgumentException();
         

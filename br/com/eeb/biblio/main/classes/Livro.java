@@ -6,6 +6,7 @@
 package br.com.eeb.biblio.main.classes;
 import br.com.eeb.biblio.main.interfaces.Cambiavel;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  *
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 public class Livro implements Cambiavel {
     private String nome;
     private String editora;
+    private String cdd;
     private int paginas;
     private int quantidadeEstoque;
     private int quantidadeDisponivel;
@@ -22,9 +24,10 @@ public class Livro implements Cambiavel {
     public Livro() {
     }
 
-    public Livro(String nome, String editora, int qEst, int qDis, int qntPaginas) {
+    public Livro(String nome, String editora, String cdd, int qEst, int qDis, int qntPaginas) {
         this.nome = nome;
         this.editora = editora;
+        this.cdd = cdd;
         this.paginas = qntPaginas;
         this.quantidadeEstoque = qEst;
         this.quantidadeDisponivel = qDis;
@@ -59,16 +62,42 @@ public class Livro implements Cambiavel {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if(this.nome.equals(((Livro)obj).getNome()) && 
-           this.editora.equals(((Livro)obj).getEditora()) &&
-           this.paginas == ((Livro)obj).getPaginas() &&
-           this.quantidadeEstoque == ((Livro)obj).getQuantidadeEstoque())
-           return true;
-        
-        return false;
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.nome);
+        hash = 97 * hash + Objects.hashCode(this.editora);
+        hash = 97 * hash + Objects.hashCode(this.cdd);
+        hash = 97 * hash + this.paginas;
+        return hash;
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Livro other = (Livro) obj;
+        if (this.paginas != other.paginas) {
+            return false;
+        }
+        if (!Objects.equals(this.nome, other.nome)) {
+            return false;
+        }
+        if (!Objects.equals(this.editora, other.editora)) {
+            return false;
+        }
+        if (!Objects.equals(this.cdd, other.cdd)) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         String alunos;
@@ -84,7 +113,7 @@ public class Livro implements Cambiavel {
                 else alunos += alunoEmprestou.get(i).toString()+";";
             }
         }
-        return nome+";"+editora+";"+quantidadeEstoque+";"+quantidadeDisponivel+";"+paginas+";"+alunos;
+        return nome+";"+editora+";"+quantidadeEstoque+";"+quantidadeDisponivel+";"+paginas+";"+cdd+";"+alunos;
     }
     
     public String getEditora() {
@@ -137,5 +166,13 @@ public class Livro implements Cambiavel {
     
     public void setAlunoEmprestou(Aluno alunoEmprestou) {
         this.alunoEmprestou.add(alunoEmprestou);
+    }
+
+    public String getCdd() {
+        return cdd;
+    }
+
+    public void setCdd(String cdd) {
+        this.cdd = cdd;
     }
 }

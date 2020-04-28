@@ -39,6 +39,7 @@ public class TabelaMain extends AbstractTableModel{
             case 2: return this.dados.get(rowIndex).getPaginas();
             case 3: return this.dados.get(rowIndex).getQuantidadeDisponivel();
             case 4: return this.dados.get(rowIndex).getQuantidadeEstoque();
+            case 5: return this.dados.get(rowIndex).getCdd();
         }
         return null;
     }
@@ -60,6 +61,9 @@ public class TabelaMain extends AbstractTableModel{
                 break;
             case 4:
                 this.dados.get(rowIndex).setQuantidadeEstoque((int) livro);
+                break;
+            case 5:
+                this.dados.get(rowIndex).setCdd((String) livro);
                 break;
         }
         this.fireTableRowsUpdated(rowIndex, rowIndex);
@@ -94,6 +98,11 @@ public class TabelaMain extends AbstractTableModel{
     }
 
     public void setDados(ArrayList<Livro> dados) {
+        this.dados = dados;
+        this.fireTableDataChanged();
+    }
+
+    public void setDados2(ArrayList<Livro> dados) {
         this.dados = dados;
     }
     
